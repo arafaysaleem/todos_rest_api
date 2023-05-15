@@ -109,35 +109,3 @@ Performs package initialization.
 ## License
 
 MIT License
-
-# Configuration Diagram
-
-```mermaid
-graph TD
-A[app.py] --> B((.envs))
-A --> C((Pipfile))
-A --> D((Pipfile.lock))
-A --> E((requirements.txt))
-A --> F((src))
-B --> G(.env.development)
-B --> H(.env.production)
-C --> I(python_version = '3.7')
-C --> J(flask = "*")
-C --> K(flask-restful = "*")
-D --> L(flask==1.1.2)
-D --> M(flask-restful==0.3.8)
-F --> N((config))
-F --> O((controllers))
-F --> P((dtos))
-F --> Q((models))
-F --> R((__init__.py))
-N --> S(routes.py)
-N --> T(services.py)
-N --> U(settings.py)
-O --> V(auth_controller.py)
-O --> W(todos_controller.py)
-P --> X(auth_dto.py)
-P --> Y(todo_create_dto.py)
-P --> Z(todo_update_dto.py)
-Q --> AA(todo_model.py)
-Q --> BB(user_model.py)
