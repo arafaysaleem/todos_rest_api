@@ -1,17 +1,18 @@
 from datetime import datetime
 
-from src.config.services import db, ma
+from config.services import db, ma
 
 class TodoModel(db.Model):
     __tablename__ = 'todos'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    task = db.Column(db.String(100))
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    task = db.Column(db.String(100), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    is_done = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(
-        db.DateTime, default=datetime.utcnow
+        db.DateTime, default=datetime.utcnow, nullable=False
     )
     updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
     )
 
     def __repr__(self):

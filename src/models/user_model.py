@@ -1,18 +1,18 @@
 from datetime import datetime
 
-from src.config.services import db, ma
-from src.models.todo_model import TodoModel
+from config.services import db, ma
+from models.todo_model import TodoModel
 
 class UserModel(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(100))
-    password = db.Column(db.Text)
+    email = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.Text, nullable=False)
     created_at = db.Column(
-        db.DateTime, default=datetime.utcnow
+        db.DateTime, default=datetime.utcnow, nullable=False
     )
     updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
     )
     tasks = db.relationship('TodoModel', backref='author', lazy=True)
 
