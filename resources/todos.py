@@ -4,24 +4,8 @@ from flask_restful import Resource, reqparse
 from werkzeug.exceptions import BadRequest
 
 from resources.errors import NotFoundException, ValidationException
-
-todos = [
-    {
-        "id": 1,
-        "task": "Do this",
-        "created_at": "2023-11-05 10:00:00",
-    },
-    {
-        "id": 2,
-        "task": "Do that",
-        "created_at": "2023-11-05 10:00:00",
-    },
-    {
-        "id": 3,
-        "task": "Do this and that",
-        "created_at": "2023-11-05 10:00:00",
-    },
-]
+from resources.models.todo_model import TodoModel, todos_schema, todo_schema
+from resources.models.user_model import UserModel
 
 class TodosApi(Resource):
     method_decorators = [jwt_required()]
@@ -29,10 +13,13 @@ class TodosApi(Resource):
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('task', type=str, required=True, help='No task provided', location='json')
+        self.reqparse.add_argument('author_id', type=int, required=True, help='No author_id provided', location='json')
         super(TodosApi, self).__init__()
 
     def get(self):
-        return todos, 200
+        author_id = request.args.get('author_id')
+        todos = TodoModel.findAll(author_id)
+        return todos_schema.dump(todos), 200
 
     def post(self):
         # Validate the request body
@@ -43,9 +30,12 @@ class TodosApi(Resource):
 
         # Retrieve the request body
         todo = request.get_json()
-        todo['id'] = len(todos) + 1
-        todos.append(todo)
-        return todo, 200
+
+        # Create model
+        author = UserModel.findOne(todo['author_id'])
+        todo = TodoModel(task=todo['task'], author=author)
+        todo = todo.create()
+        return todo_schema.dump(todo), 201
     
 class TodoApi(Resource):
     method_decorators = [jwt_required()]
@@ -54,8 +44,14 @@ class TodoApi(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('task', type=str, required=True, help='No task provided', location='json')
         super(TodoApi, self).__init__()
+        
+    def get(self, id:int):
+        todo = TodoModel.findOne(id)
+        if not todo:
+            raise NotFoundException('Todo not found')
+        return todo_schema.dump(todo), 200
 
-    def put(self, id):
+    def put(self, id:int):
         # Validate the request body
         try:
             self.reqparse.parse_args(strict=True)
@@ -64,24 +60,16 @@ class TodoApi(Resource):
 
         # Retrieve the request body
         body = request.get_json()
-        id = int(id)
-        todo = [t for t in todos if t['id'] == id]
+        todo = TodoModel.findOne(id)
         if not todo:
             raise NotFoundException('Todo not found')
-        todo[0]['task'] = body['task']
-        return todo[0], 200
+        todo.update(body)
+        return todo_schema.dump(todo), 200
 
-    def delete(self, id):
-        id = int(id)
-        todo = [t for t in todos if t['id'] == id]
+    def delete(self, id:int):
+        todo = TodoModel.findOne(id)
         if not todo:
             raise NotFoundException('Todo not found')
-        todos.remove(todo[0])
+        todo.delete()
         return {'message': 'Todo deleted successfully'}, 200
     
-    def get(self, id):
-        id = int(id)
-        todo = [t for t in todos if t['id'] == id]
-        if not todo:
-            raise NotFoundException('Todo not found')
-        return todo[0], 200
