@@ -6,8 +6,8 @@ class AuthDTO():
         self.password = password
     
 class AuthDTOSchema(Schema):
-    email = fields.Email(required=True)
-    password = fields.Str(required=True)
+    email = fields.Email(required=True, help='No email provided')
+    password = fields.Str(required=True, help='No password provided')
 
     class Meta:
         make_instance = True

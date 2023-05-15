@@ -1,6 +1,6 @@
 
-from src.controllers.auth_controller import LoginController, RegisterController
-from src.controllers.todos_controller import TodoController, TodosController
+from ..controllers.auth_controller import LoginController, RegisterController
+from ..controllers.todos_controller import TodoController, TodosController
 
 def initialize_routes(api):
  version = 'v1'
