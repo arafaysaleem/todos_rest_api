@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from resources.services import db, ma
+from src.config.services import db, ma
 
 class TodoModel(db.Model):
     __tablename__ = 'todos'

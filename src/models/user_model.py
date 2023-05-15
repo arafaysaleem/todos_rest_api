@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from resources.services import db, ma
-from resources.models.todo_model import TodoModel
+from src.config.services import db, ma
+from src.models.todo_model import TodoModel
 
 class UserModel(db.Model):
     __tablename__ = 'users'

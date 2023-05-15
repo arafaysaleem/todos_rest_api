@@ -1,9 +1,9 @@
 from flask import Flask, jsonify
 from flask_restful import Api
-from resources.routes import initialize_routes
-from resources.services import initialize_services
+from src.config.routes import initialize_routes
+from src.config.services import initialize_services
 
-from resources.settings import Settings
+from src.config.settings import Settings
 
 app = Flask(__name__)
 api = Api(app)

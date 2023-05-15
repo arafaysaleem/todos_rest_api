@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
-from resources.settings import Settings
+from src.config.settings import Settings
 
 db = SQLAlchemy()
 ma = Marshmallow()

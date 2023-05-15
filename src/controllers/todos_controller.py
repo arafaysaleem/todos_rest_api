@@ -3,18 +3,18 @@ from flask_jwt_extended import jwt_required
 from flask_restful import Resource, reqparse
 from werkzeug.exceptions import BadRequest
 
-from resources.errors import NotFoundException, ValidationException
-from resources.models.todo_model import TodoModel, todos_schema, todo_schema
-from resources.models.user_model import UserModel
+from src.config.errors import NotFoundException, ValidationException
+from src.models.todo_model import TodoModel, todos_schema, todo_schema
+from src.models.user_model import UserModel
 
-class TodosApi(Resource):
+class TodosController(Resource):
     method_decorators = [jwt_required()]
     
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('task', type=str, required=True, help='No task provided', location='json')
         self.reqparse.add_argument('author_id', type=int, required=True, help='No author_id provided', location='json')
-        super(TodosApi, self).__init__()
+        super(TodosController, self).__init__()
 
     def get(self):
         author_id = request.args.get('author_id')
@@ -37,13 +37,13 @@ class TodosApi(Resource):
         todo = todo.create()
         return todo_schema.dump(todo), 201
     
-class TodoApi(Resource):
+class TodoController(Resource):
     method_decorators = [jwt_required()]
 
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('task', type=str, required=True, help='No task provided', location='json')
-        super(TodoApi, self).__init__()
+        super(TodoController, self).__init__()
         
     def get(self, id:int):
         todo = TodoModel.findOne(id)

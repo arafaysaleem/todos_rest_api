@@ -5,11 +5,11 @@ from flask_jwt_extended import create_access_token
 from werkzeug.exceptions import BadRequest
 from datetime import timedelta
 
-from resources.errors import NotFoundException, DuplicateException, UnauthorizedException, ValidationException
-from resources.models.user_model import UserModel, user_schema
-from resources.models.auth_model import AuthDTO, auth_dto_schema
+from src.config.errors import NotFoundException, DuplicateException, UnauthorizedException, ValidationException
+from src.models.user_model import UserModel, user_schema
+from src.models.auth_model import AuthDTO, auth_dto_schema
 
-from resources.settings import Settings
+from src.config.settings import Settings
 
 def hash_password(password):
     return generate_password_hash(password).decode('utf8')
@@ -21,12 +21,12 @@ def generate_token(email):
     expires = timedelta(hours=Settings.JWT_EXPIRATION_HOURS)
     return create_access_token(identity=str(email), expires_delta=expires)
 
-class RegisterApi(Resource):
+class RegisterController(Resource):
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('email', type=str, required=True, help='No email provided', location='json')
         self.reqparse.add_argument('password', type=str, required=True, help='No password provided', location='json')
-        super(RegisterApi, self).__init__()
+        super(RegisterController, self).__init__()
     
     def post(self):
         errors = auth_dto_schema.validate(request.get_json())
@@ -47,12 +47,12 @@ class RegisterApi(Resource):
             user = dict(user_schema.dump(user))
             return {'token': access_token, **user}, 200
 
-class LoginApi(Resource):
+class LoginController(Resource):
     def __init__(self) -> None:
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('email', type=str, required=True, help='No email provided', location='json')
         self.reqparse.add_argument('password', type=str, required=True, help='No password provided', location='json')
-        super(LoginApi, self).__init__()
+        super(LoginController, self).__init__()
 
     def post(self):
         errors = auth_dto_schema.validate(request.get_json())
